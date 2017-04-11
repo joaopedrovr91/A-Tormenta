@@ -8,6 +8,10 @@ public class GameController : MonoBehaviour
     public float espera;
     public float tempoDestruicao;
     public GameObject obstaculo;
+    public GameObject menu;
+    public GameObject canvas;
+
+
 
     public static GameController instancia = null;
 
@@ -43,8 +47,11 @@ public class GameController : MonoBehaviour
     public void PlayerComecou()
     {
         estado = Estado.Jogando;
+        menu.SetActive(false);
+        canvas.SetActive(false);
         StartCoroutine(GerarObstaculos());
     }
+
     public void PlayerMorreu()
     {
         estado = Estado.GameOver;
