@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class GameController : MonoBehaviour
 {
@@ -8,8 +9,16 @@ public class GameController : MonoBehaviour
     public float espera;
     public float tempoDestruicao;
     public GameObject obstaculo;
-    public GameObject menu;
-    public GameObject canvas;
+    public GameObject menuCamera;
+    public GameObject menuPanel;
+    public GameObject gameOverPanel;
+    public GameObject pontosPanel;
+    public Text txtPontos;
+    public Text txtMaiorPontuacao;
+
+    private int pontos;
+
+
 
 
 
@@ -32,6 +41,12 @@ public class GameController : MonoBehaviour
     void Start()
     {
         estado = Estado.AguardoComecar;
+        PlayerPrefs.SetInt("HighScore", 0);
+        menuCamera.SetActive(true);
+        menuPanel.SetActive(true);
+        gameOverPanel.SetActive(false);
+        pontosPanel.SetActive(false);
+
     }
     IEnumerator GerarObstaculos()
     {
@@ -47,13 +62,38 @@ public class GameController : MonoBehaviour
     public void PlayerComecou()
     {
         estado = Estado.Jogando;
-        menu.SetActive(false);
-        canvas.SetActive(false);
+        menuCamera.SetActive(false);
+        menuPanel.SetActive(false);
+        pontosPanel.SetActive(true);
+        atualizarPontos(0);
         StartCoroutine(GerarObstaculos());
     }
+
+    private void atualizarPontos(int x) {
+        pontos = x;
+        txtPontos.text = "" + x;
+    }
+    public void incrementarPontos(int x) {
+        atualizarPontos(pontos + x);
+    }
+
 
     public void PlayerMorreu()
     {
         estado = Estado.GameOver;
+        if (pontos > PlayerPrefs.GetInt("HighScore")) {
+            PlayerPrefs.SetInt("HighScore", pontos);
+            txtMaiorPontuacao.text = "" + pontos;
+        }
+        gameOverPanel.SetActive(true);
+    }
+
+    public void PlayerVoltou() {
+        estado = Estado.AguardoComecar;
+        menuCamera.SetActive(true);
+        menuPanel.SetActive(true);
+        gameOverPanel.SetActive(false);
+        pontosPanel.SetActive(false);
+        GameObject.Find("Zeca").GetComponent<PlayerController>().recomecar();
     }
 }
